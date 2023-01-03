@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Order {
+public class Orders {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -47,7 +47,7 @@ public class Order {
 	@ElementCollection
 	private List<OrderDTO> products = new ArrayList<>();
 
-	public Order(LocalDateTime orderDate, @NotNull(message = "Order status should not be null") String orderStatus,
+	public Orders(LocalDateTime orderDate, @NotNull(message = "Order status should not be null") String orderStatus,
 			@NotNull(message = "Payment status should not be null") String paymentStatus,
 			@NotNull(message = "Transaction mode should not be null") String transactionMode, Integer quantity,
 			Double totalCost) {

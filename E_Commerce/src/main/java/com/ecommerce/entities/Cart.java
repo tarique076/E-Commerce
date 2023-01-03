@@ -1,5 +1,7 @@
 package com.ecommerce.entities;
 
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,5 +30,5 @@ public class Cart {
 	
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "cart_products")
-	private java.util.List<ProductDTO> products;
+	private List<ProductDTO> products;
 }
