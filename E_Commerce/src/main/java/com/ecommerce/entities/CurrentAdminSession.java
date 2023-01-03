@@ -20,7 +20,7 @@ public class CurrentAdminSession {
 	@Column(unique = true)
 	private Integer userId;
 	
-	private String key;
+	private String uuid;
 	
 	private LocalDateTime localDateTime;
 }

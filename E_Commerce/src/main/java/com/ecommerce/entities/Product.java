@@ -63,6 +63,9 @@ public class Product {
 	@ManyToOne
 	private Category category;
 	
+//	@NotNull(message = "CategoryId cannot be null")
+//	private Integer categorId;
+	
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Feedback> feedback = new ArrayList<>();
 }
