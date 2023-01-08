@@ -30,5 +30,5 @@ public class Cart {
 	
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "cart_products")
-	private List<ProductDTO> products;
+	private List<CartProductDTO> products;
 }
