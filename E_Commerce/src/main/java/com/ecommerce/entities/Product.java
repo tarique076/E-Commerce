@@ -30,9 +30,6 @@ public class Product {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer productId;
 	
-	@JsonIgnore
-	private Integer adminId;
-	
 	@NotNull(message = "Product name should not be null")
 	private String productName;
 	
@@ -54,18 +51,15 @@ public class Product {
 	@NotNull(message = "Brand name can not be null")
 	private String brand;
 	
-	@Min(value = 1, message = "Stock should not be less than 1")
-	@NotNull(message = "Stock can not be null")
-	private Integer stock;
+	@Min(value = 1, message = "Quantity should not be less than 1")
+	@NotNull(message = "Quantity can not be null")
+	private Integer quantity;
 	
 	private String description;
 	
-	@ManyToOne
-	private Category category;
+	private String category;
 	
-//	@NotNull(message = "CategoryId cannot be null")
-//	private Integer categorId;
-	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Feedback> feedback = new ArrayList<>();
 }

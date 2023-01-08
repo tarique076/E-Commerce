@@ -9,4 +9,5 @@ import com.ecommerce.entities.Customer;
 public interface CustomerDAO extends JpaRepository<Customer, Integer>{
 
 	public Customer findByMobile(String mobile);
+	
 }
