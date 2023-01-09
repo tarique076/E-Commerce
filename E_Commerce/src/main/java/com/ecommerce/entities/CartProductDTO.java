@@ -18,7 +18,7 @@ public class CartProductDTO {
 
 	private String productName;
 
-	private Double salePrice;
+	private Double price;
 
 	private String color;
 

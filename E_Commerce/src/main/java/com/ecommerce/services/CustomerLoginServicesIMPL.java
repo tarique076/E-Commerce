@@ -17,54 +17,54 @@ import com.ecommerce.repository.CustomerDAO;
 import net.bytebuddy.utility.RandomString;
 
 @Service
-public class CustomerLoginServicesIMPL implements CustomerLoginServices{
+public class CustomerLoginServicesIMPL implements CustomerLoginServices {
 
 	@Autowired
 	private CurrentCustomerSessionDAO sessionDao;
-	
+
 	@Autowired
 	private CustomerDAO customerDao;
-	
+
 	@Override
 	public String loginCustomer(CustomerLoginDTO dto) throws LoginException, CustomerException {
 		// TODO Auto-generated method stub
-		
+
 		Customer customer = customerDao.findByMobile(dto.getMobile());
-		
-		if(customer==null)
+
+		if (customer == null)
 			throw new CustomerException("No customer found with mobile " + dto.getMobile());
-		
+
 		Optional<CurrentCustomerSession> opt = sessionDao.findById(customer.getCustomerId());
-		
-		if(opt.isPresent())
+
+		if (opt.isPresent())
 			new LoginException("User already logged in");
-		
-		if(customer.getPassword().equals(dto.getPassword())) {
-			
+
+		if (customer.getPassword().equals(dto.getPassword())) {
+
 			String uuid = RandomString.make(6);
-			
-			CurrentCustomerSession session = new CurrentCustomerSession(customer.getCustomerId(), uuid, LocalDateTime.now());
-			
+
+			CurrentCustomerSession session = new CurrentCustomerSession(customer.getCustomerId(), uuid,
+					LocalDateTime.now());
+
 			sessionDao.save(session);
-			
+
 			return session.toString();
-		}else
+		} else
 			throw new LoginException("Invalid password. Please try again.");
-		
-		
+
 	}
 
 	@Override
 	public String logoutCustomer(String uuid) throws LoginException {
 		// TODO Auto-generated method stub
-		
+
 		CurrentCustomerSession session = sessionDao.findByUuid(uuid);
-		
-		if(session==null)
+
+		if (session == null)
 			throw new LoginException("No session found with id " + uuid);
-		
+
 		sessionDao.delete(session);
-		
+
 		return "Logged Out.!";
 	}
 
