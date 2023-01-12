@@ -60,16 +60,17 @@ public class CartServicesIMPL implements CartServices {
 		else
 			dto.setStockStatus("Out of stock.");
 		
-		customer.getCart().getProducts().add(dto);
-		if(customer.getCart().getQuantity()==null) {
-			customer.getCart().setQuantity(quantity);
-		}else
+		if(customer.getCart()==null) {
+			Cart newCart = new Cart();
+			newCart.setQuantity(quantity);
+			newCart.setTotalCost(dto.getPrice()*dto.getQuantity());
+			newCart.getProducts().add(dto);
+			customer.setCart(newCart);
+		}else {
 			customer.getCart().setQuantity(customer.getCart().getQuantity()+quantity);
-		
-		if(customer.getCart().getTotalCost()==null) {
-			customer.getCart().setTotalCost(dto.getPrice()*dto.getQuantity());
-		}else
-			customer.getCart().setTotalCost(customer.getCart().getTotalCost() + (dto.getPrice()*dto.getQuantity()));
+			customer.getCart().setTotalCost(customer.getCart().getTotalCost()+(dto.getPrice()*dto.getQuantity()));
+			customer.getCart().getProducts().add(dto);
+		}
 		
 		customerDao.save(customer);
 		
