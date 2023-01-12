@@ -20,19 +20,19 @@ import com.ecommerce.repository.ProductDAO;
 
 @Service
 public class CartServicesIMPL implements CartServices {
-	
+
 	@Autowired
 	private CurrentCustomerSessionDAO customerSessionDao;
-	
+
 	@Autowired
 	private CustomerDAO customerDao;
-	
+
 	@Autowired
 	private ProductDAO productDao;
-	
+
 	@Autowired
 	private CartProductDtoDAO cartProductDao;
-	
+
 	@Autowired
 	private CartDAO cartDao;
 
@@ -41,38 +41,40 @@ public class CartServicesIMPL implements CartServices {
 			throws CustomerException, ProductException, LoginException, CartException {
 		// TODO Auto-generated method stub
 		CurrentCustomerSession session = customerSessionDao.findByUuid(uuid);
-		if(session==null)
-			throw new LoginException("No active session found with "+uuid);
-		
+		if (session == null)
+			throw new LoginException("No active session found with " + uuid);
+
 		Product product = productDao.findById(productId).orElseThrow(() -> new ProductException("Invalid productId."));
-		
-		Customer customer = customerDao.findById(session.getUserId()).orElseThrow(() -> new CustomerException("Customer not found."));
-		
+
+		Customer customer = customerDao.findById(session.getUserId())
+				.orElseThrow(() -> new CustomerException("Customer not found."));
+
 		CartProductDTO dto = new CartProductDTO();
 		dto.setProductId(product.getProductId());
 		dto.setProductName(product.getProductName());
 		dto.setBrand(product.getBrand());
 		dto.setColor(product.getColor());
 		dto.setQuantity(quantity);
-		dto.setPrice(product.getMrp());
-		if(product.getQuantity()>0)
+		dto.setPrice(product.getPrice());
+		if (product.getQuantity() > 0)
 			dto.setStockStatus("In stock.");
 		else
 			dto.setStockStatus("Out of stock.");
-		
-		customer.getCart().getProducts().add(dto);
-		if(customer.getCart().getQuantity()==null) {
-			customer.getCart().setQuantity(quantity);
-		}else
-			customer.getCart().setQuantity(customer.getCart().getQuantity()+quantity);
-		
-		if(customer.getCart().getTotalCost()==null) {
-			customer.getCart().setTotalCost(dto.getPrice()*dto.getQuantity());
-		}else
-			customer.getCart().setTotalCost(customer.getCart().getTotalCost() + (dto.getPrice()*dto.getQuantity()));
-		
+
+		if (customer.getCart() == null) {
+			Cart newCart = new Cart();
+			newCart.setQuantity(quantity);
+			newCart.setTotalCost(dto.getPrice() * dto.getQuantity());
+			newCart.getProducts().add(dto);
+			customer.setCart(newCart);
+		} else {
+			customer.getCart().setQuantity(customer.getCart().getQuantity() + quantity);
+			customer.getCart().setTotalCost(customer.getCart().getTotalCost() + (dto.getPrice() * dto.getQuantity()));
+			customer.getCart().getProducts().add(dto);
+		}
+
 		customerDao.save(customer);
-		
+
 		return cartDao.save(customer.getCart());
 	}
 
@@ -80,13 +82,46 @@ public class CartServicesIMPL implements CartServices {
 	public String deleteFromCart(Integer productId, String uuid)
 			throws CustomerException, ProductException, LoginException, CartException {
 		// TODO Auto-generated method stub
-		return null;
+		CurrentCustomerSession session = customerSessionDao.findByUuid(uuid);
+		if (session == null)
+			throw new LoginException("No active session found with " + uuid);
+
+		Customer customer = customerDao.findById(session.getUserId())
+				.orElseThrow(() -> new CustomerException("Invalid customer details."));
+
+		if (customer.getCart() == null)
+			throw new CartException("Cart is already empty. Nothing to delete.");
+
+		CartProductDTO dto = cartProductDao.findById(productId)
+				.orElseThrow(() -> new ProductException("No product found in cart with productId " + productId));
+
+		customer.getCart().getProducts().remove(dto);
+
+		if (customer.getCart().getProducts().isEmpty()) {
+			Cart cart = customer.getCart();
+			cartDao.delete(cart);
+			customer.setCart(null);
+		}
+
+		customerDao.save(customer);
+
+		return "Product deleted from cart.";
 	}
 
 	@Override
 	public Cart getCartDetails(String uuid) throws CustomerException, ProductException, LoginException, CartException {
 		// TODO Auto-generated method stub
-		return null;
+		CurrentCustomerSession session = customerSessionDao.findByUuid(uuid);
+		if (session == null)
+			throw new LoginException("No active session found with " + uuid);
+
+		Customer customer = customerDao.findById(session.getUserId())
+				.orElseThrow(() -> new CustomerException("No customer found with uuid " + uuid));
+
+		if (customer.getCart() == null)
+			throw new CartException("Cart is empty.");
+
+		return customer.getCart();
 	}
 
 	@Override

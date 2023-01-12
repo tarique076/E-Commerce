@@ -1,5 +1,6 @@
 package com.ecommerce.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -30,5 +31,5 @@ public class Cart {
 	
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "cart_products")
-	private List<CartProductDTO> products;
+	private List<CartProductDTO> products = new ArrayList<>();
 }
