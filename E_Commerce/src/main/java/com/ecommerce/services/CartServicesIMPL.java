@@ -128,7 +128,19 @@ public class CartServicesIMPL implements CartServices {
 	public String deleteAllFromCart(String uuid)
 			throws CustomerException, ProductException, LoginException, CartException {
 		// TODO Auto-generated method stub
-		return null;
+		CurrentCustomerSession session = customerSessionDao.findByUuid(uuid);
+		if (session == null)
+			throw new LoginException("No active session found with " + uuid);
+
+		Customer customer = customerDao.findById(session.getUserId())
+				.orElseThrow(() -> new CustomerException("No customer found with uuid " + uuid));
+
+		if (customer.getCart() == null)
+			throw new CartException("Cart is empty.");
+		
+		cartDao.delete(customer.getCart());
+		
+		return "Cart deleted successfully !";
 	}
 
 	@Override
