@@ -1,6 +1,7 @@
 package com.ecommerce.services;
 
 import com.ecommerce.entities.Cart;
+import com.ecommerce.entities.CartProductDTO;
 import com.ecommerce.exceptions.CartException;
 import com.ecommerce.exceptions.CustomerException;
 import com.ecommerce.exceptions.LoginException;
@@ -16,5 +17,5 @@ public interface CartServices {
 	
 	public String deleteAllFromCart(String uuid) throws CustomerException,ProductException, LoginException, CartException;
 	
-	public String updateProductQuantity(Integer productId, Integer quantity, String uuid) throws CustomerException,ProductException, LoginException, CartException;
+	public CartProductDTO updateProductQuantity(Integer productId, Integer quantity, String uuid) throws CustomerException,ProductException, LoginException, CartException;
 }

@@ -144,10 +144,27 @@ public class CartServicesIMPL implements CartServices {
 	}
 
 	@Override
-	public String updateProductQuantity(Integer productId, Integer quantity, String uuid)
+	public CartProductDTO updateProductQuantity(Integer productId, Integer quantity, String uuid)
 			throws CustomerException, ProductException, LoginException, CartException {
 		// TODO Auto-generated method stub
-		return null;
+		CurrentCustomerSession session = customerSessionDao.findByUuid(uuid);
+		if (session == null)
+			throw new LoginException("No active session found with " + uuid);
+
+		Customer customer = customerDao.findById(session.getUserId())
+				.orElseThrow(() -> new CustomerException("Invalid customer details."));
+
+		if (customer.getCart() == null)
+			throw new CartException("No items added in cart.");
+
+		CartProductDTO dto = cartProductDao.findById(productId)
+				.orElseThrow(() -> new ProductException("No product found in cart with productId " + productId));
+		
+		dto.setQuantity(quantity);
+		
+		customerDao.save(customer);
+		
+		return cartProductDao.save(dto);
 	}
 
 }
